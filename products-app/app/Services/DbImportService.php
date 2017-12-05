@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\ProductImportRepository;
 use Exception;
 use DB;
 use Illuminate\Support\Facades\Storage;
@@ -15,26 +16,43 @@ class DbImportService
     /** @var boolean|resource */
     protected $handle;
 
-    public function importToDb($skipFirst = true)
+    public function importToDb()
     {
         try {
-            $filePath = Storage::disk('local');
+            $filePath = storage_path('app/imports/') . $this->fileName;
             $this->handle = fopen($filePath, 'rw');
-            dd($this->handle);
-            $data = $this->getCsvData($filePath, $skipFirst);
+            $data = $this->getCsvData();
+
+            $importRepository = new ProductImportRepository($data);
+
             return $data;
         } catch (Exception $e) {
             echo $e->getMessage();
         }
     }
 
-    private function getCsvData($filePath, $skipFirst)
+    /**
+     * Extract the CSV data for importing
+     *
+     * @return array
+     */
+    private function getCsvData()
     {
-        $data = fgetcsv($filePath, ',');
-        if ($skipFirst) {
-            $data = array_shift($data);
+        $skipFirst = true;
+        $dataStack = [];
+        $headers =[];
+        while (($data = fgetcsv($this->handle, 0, ",")) !== FALSE) {
+            if (!$skipFirst) {
+                $dataStack []= $data;
+            } else {
+                $headers []= $data;
+            }
+
+            $skipFirst = false;
         }
-        return $data;
+        fclose($this->handle);
+
+        return ['headers' => $headers, 'data' => $dataStack];
     }
 
 }
