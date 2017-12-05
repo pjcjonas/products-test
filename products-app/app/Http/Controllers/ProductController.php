@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductCsvImportRequest;
+use App\Product;
 use App\Services\UploadsService;
 use Exception;
 
@@ -19,17 +20,28 @@ class ProductController extends Controller
         $this->uploadsService = $uploadsService;
     }
 
+    /**
+     * Render the welcome view
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function importProductsView()
     {
+        $products = Product::validProducts()->get();
+        dd($products);
         return view('welcome');
     }
 
+    /**
+     * @param ProductCsvImportRequest $request
+     */
     public function importProducts(ProductCsvImportRequest $request)
     {
         try {
-            $file = $this->uploadsService->upload($request, 'import_products', true, false);
+            $status = $this->uploadsService->upload($request, 'import_products');
+            return redirect('/')->with('status', $status);
         } catch (Exception $e) {
-            dd("importProducts ", $e->getMessage());
+            return redirect('/')->with('status', false)->with('error', $e->getMessage());
         }
     }
 }

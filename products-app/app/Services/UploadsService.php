@@ -13,19 +13,12 @@ class UploadsService extends DbImportService
      * @param $key
      * @return false|string cxdswaq 1`qgft vf 7h6
      */
-    public function upload(Request $request, $key = '', $import = false, $skipFirst = false)
+    public function upload(Request $request, $key = '')
     {
-        try {
-            $this->fileName = time() . "_" .$request->file($key)->getClientOriginalName();
-            $file = $request
-                ->file($key)
-                ->storeAs('imports', $this->fileName);
-
-            $this->importToDb($skipFirst);
-            return $file;
-        } catch (Exception $e) {
-            dd("upload", $e->getMessage());
-        }
+        $this->fileName = time() . "_" .$request->file($key)->getClientOriginalName();
+        $request->file($key)->storeAs('imports', $this->fileName);
+        $data = $this->importToDb();
+        return $data;
     }
 
 }

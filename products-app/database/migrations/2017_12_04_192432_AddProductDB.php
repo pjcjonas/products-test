@@ -16,15 +16,17 @@ class AddProductDB extends Migration
         Schema::create('products', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('sku')->nullable();
-            $table->float('price')->nullable();
+            $table->string('sku')->nullable()->unique();
+            $table->string('price')->nullable();
             $table->string('status')->default('inactive');
-            $table->boolean('quality_approved')->default(false);
+            $table->boolean('quality_approved')->default(false)->nullable();
             $table->string('image_url')->nullable();
             $table->string('brand');
             $table->timestamps();
             $table->softDeletes();
         });
+
+
     }
 
     /**

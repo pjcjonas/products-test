@@ -8,22 +8,21 @@ use Exception;
 class ProductImportRepository
 {
 
-    /** @var array */
-    protected $importData;
-
-    public function __construct($importData)
+    /**
+     * ProductImportRepository constructor.
+     */
+    public function __construct()
     {
-        $this->importData = $importData;
     }
 
-    public function importProductData()
+    /**
+     * Insert the imported data
+     * @return bool
+     */
+    public function importData($importData)
     {
-        try {
-            $product = new Product();
-
-        } catch (Exception $e) {
-
-        }
+        $importStatus = Product::insert($importData['data']);
+        return $importStatus;
     }
 
 }

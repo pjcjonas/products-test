@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Product;
 use App\Repositories\ProductImportRepository;
 use Exception;
 use DB;
@@ -16,19 +17,22 @@ class DbImportService
     /** @var boolean|resource */
     protected $handle;
 
+    /**
+     * Process and import data into DB
+     *
+     * @return bool
+     */
     public function importToDb()
     {
-        try {
-            $filePath = storage_path('app/imports/') . $this->fileName;
-            $this->handle = fopen($filePath, 'rw');
-            $data = $this->getCsvData();
+        $filePath = storage_path('app/imports/') . $this->fileName;
+        $this->handle = fopen($filePath, 'rw');
 
-            $importRepository = new ProductImportRepository($data);
+        $data = $this->getCsvData();
 
-            return $data;
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+        $importRepository = new ProductImportRepository();
+        $import = $importRepository->importData($data);
+
+        return $import;
     }
 
     /**
@@ -41,17 +45,25 @@ class DbImportService
         $skipFirst = true;
         $dataStack = [];
         $headers =[];
-        while (($data = fgetcsv($this->handle, 0, ",")) !== FALSE) {
-            if (!$skipFirst) {
-                $dataStack []= $data;
-            } else {
-                $headers []= $data;
-            }
 
-            $skipFirst = false;
+        while (($row = fgetcsv($this->handle, 0, ",", "'")) !== FALSE) {
+            if (!$skipFirst) {
+                $column = [];
+                foreach ($headers as $index => $col) {
+                    $value = $row[$index];
+                    if ($value && !empty($value) && strtolower($value) != 'null') {
+                        $column[$col] = $value;
+                    } else {
+                        $column[$col] = null;
+                    }
+                }
+                $dataStack []= $column;
+            } else {
+                $headers = $row;
+                $skipFirst = false;
+            }
         }
         fclose($this->handle);
-
         return ['headers' => $headers, 'data' => $dataStack];
     }
 
