@@ -28,8 +28,9 @@ class ProductController extends Controller
     public function importProductsView()
     {
         $products = Product::validProducts()->get();
-        dd($products);
-        return view('welcome');
+        return view('welcome', [
+            'products' => $products
+        ]);
     }
 
     /**

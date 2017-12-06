@@ -37,6 +37,7 @@ class DbImportService
 
     /**
      * Extract the CSV data for importing
+     * TODO - This needs to be added to a que or worker. This is not sustainable if you are importing CSV files with millions of records.
      *
      * @return array
      */

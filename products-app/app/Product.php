@@ -31,14 +31,14 @@ class Product extends Model
     {
         return $query
             ->where('name', '<>', null)
-            ->where('skua', '<>', null)
+            ->where('sku', '<>', null)
             ->where('price', '<>', null)
             ->where('status', '<>', null)
+            ->where('status', '<>', 'inactive')
+            ->where('status', '<>', 'deleted')
             ->where('quality_approved', '<>', null)
             ->where('image_url', '<>', null)
             ->where('brand', '<>', null);
-
-
     }
 
 }
