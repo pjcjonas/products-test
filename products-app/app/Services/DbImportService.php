@@ -37,7 +37,7 @@ class DbImportService
 
     /**
      * Extract the CSV data for importing
-     * TODO - This needs to be added to a que or worker. This is not sustainable if you are importing CSV files with millions of records.
+     * TODO ZANDO - This needs to be added to a que or worker. This is not sustainable if you are importing CSV files with millions of records.
      *
      * @return array
      */
@@ -47,6 +47,7 @@ class DbImportService
         $dataStack = [];
         $headers =[];
 
+        // TODO ZANDO - Laravel Excel Vendor - This will work for this test case, but a MS excel uses ';' so this will break if its not ','
         while (($row = fgetcsv($this->handle, 0, ",", "'")) !== FALSE) {
             if (!$skipFirst) {
                 $column = [];
@@ -67,5 +68,4 @@ class DbImportService
         fclose($this->handle);
         return ['headers' => $headers, 'data' => $dataStack];
     }
-
 }
