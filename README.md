@@ -1,5 +1,5 @@
 **Laravel Products Application**
-Just set up the database in your .env file. Run the artisan migrations commande `php artisan migrate`. The CD into public and run `php -S localhost:8080` to boot a quick php test server. Make sure your file is saved as a .csv before importing and that its set to "," sepperated delimeter.
+Just set up the database in your .env file. Run the artisan migrations commande `php artisan migrate`. Then CD into ./public and run `php -S localhost:8080` to boot a quick php test server. Make sure your file is saved as a .csv before importing and that its set to "," sepperated delimeter. go to http://localhost:8080
 
 I can at a later stage add a Laravel Excel vendor to manage the delimeter types, but for now I am focussing on standard , sepperated delimeters.
 
